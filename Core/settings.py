@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'accounts',
     'finance',
     'planning',
@@ -98,6 +100,10 @@ DATABASES = {
         default=os.getenv('DATABASE_URL')
     )
 }
+
+# managers Validation
+
+AUTH_USER_MODEL = 'accounts.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
