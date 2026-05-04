@@ -20,9 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
       fields = ['id', 'email', 'first_name', 'last_name', 'currency', 'password']
 
       # Field Options Overriding and Data acess control
-      extra_kwargs ={
-         'password':{'write-only':True},
-      }
-   
+      extra_kwargs={
+         'password': {'write_only': True}
+         }
    def create (self, validated_data):
       return User.objects.create_user(**validated_data)
