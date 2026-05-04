@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        """إنشاء مسؤول نظام (Superuser) بكل الصلاحيات"""
+        """Create an admin user (SuperUser)."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
@@ -42,6 +42,7 @@ class User(AbstractUser):
     currency = models.CharField(max_length=5, default='USD')
     status = models.CharField(max_length=20, default='Onboarding')
     language = models.CharField(max_length=20, default='English')
+
 
     objects = UserManager()
 
