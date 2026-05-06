@@ -6,6 +6,8 @@ from django.db.models import Q, Sum
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiParameter
+from rest_framework import serializers
 from .models import Category, Transaction, Budget, BudgetCategoryLimit, SavingsGoal
 from .serializers import (
     CategorySerializer,
@@ -71,6 +73,7 @@ class TransactionViewSet(OwnerMixin, viewsets.ModelViewSet):
 
         return queryset
 
+    @extend_schema(responses={200: inline_serializer('TransactionSummaryResponse', {'income': serializers.DecimalField(max_digits=14, decimal_places=2), 'expense': serializers.DecimalField(max_digits=14, decimal_places=2), 'balance': serializers.DecimalField(max_digits=14, decimal_places=2)})})
     @action(detail=False, methods=['get'])
     def summary(self, request):
         """Return income, expense, and balance totals for an optional month/year period."""
@@ -93,6 +96,7 @@ class TransactionViewSet(OwnerMixin, viewsets.ModelViewSet):
             'balance': total_income - total_expense,
         })
 
+    @extend_schema(responses={200: inline_serializer('TransactionCategorySummaryResponse', {'category_id': serializers.IntegerField(), 'category_name': serializers.CharField(), 'total': serializers.DecimalField(max_digits=14, decimal_places=2)}, many=True)})
     @action(detail=False, methods=['get'])
     def by_category(self, request):
         """Return total spending aggregated by category for an optional month/year period."""
@@ -142,6 +146,7 @@ class SavingsGoalViewSet(OwnerMixin, viewsets.ModelViewSet):
     queryset = SavingsGoal.objects.all()
     serializer_class = SavingsGoalSerializer
 
+    @extend_schema(request=inline_serializer('ContributeRequest', {'amount': serializers.DecimalField(max_digits=14, decimal_places=2)}), responses=SavingsGoalSerializer)
     @action(detail=True, methods=['post'])
     def contribute(self, request, pk=None):
         """Add a contribution amount to a specific savings goal."""
@@ -181,6 +186,7 @@ class ReportViewSet(viewsets.ViewSet):
         """Return a hint about the available report sub-endpoints."""
         return Response({'detail': 'Use the monthly or category endpoints to fetch report data.'})
 
+    @extend_schema(responses={200: inline_serializer('ReportMonthlyResponse', {'income': serializers.DecimalField(max_digits=14, decimal_places=2), 'expense': serializers.DecimalField(max_digits=14, decimal_places=2), 'balance': serializers.DecimalField(max_digits=14, decimal_places=2)})})
     @action(detail=False, methods=['get'])
     def monthly(self, request):
         """Return monthly income, expense, and balance summary."""
@@ -189,6 +195,7 @@ class ReportViewSet(viewsets.ViewSet):
         data = ReportService().monthly_summary(request.user, month, year)
         return Response(data)
 
+    @extend_schema(responses={200: inline_serializer('ReportCategorySummaryResponse', {'category_id': serializers.IntegerField(), 'category_name': serializers.CharField(), 'total': serializers.DecimalField(max_digits=14, decimal_places=2)}, many=True)})
     @action(detail=False, methods=['get'])
     def by_category(self, request):
         """Return spending totals grouped by category for the specified period."""

@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from drf_spectacular.utils import extend_schema
 from finance.models import SavingsGoal
 from .serializers import BudgetCategoryLimitSerializer, SavingsGoalSerializer
 
@@ -11,6 +12,7 @@ class BudgetLimitView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=BudgetCategoryLimitSerializer, responses=BudgetCategoryLimitSerializer)
     def post(self, request):
         """Accept category and limit, auto-assign to the current month's budget."""
         serializer = BudgetCategoryLimitSerializer(
@@ -28,12 +30,14 @@ class SavingsGoalView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=SavingsGoalSerializer(many=True))
     def get(self, request):
         """Return all savings goals belonging to the authenticated user."""
         goals = SavingsGoal.objects.filter(user=request.user)
         serializer = SavingsGoalSerializer(goals, many=True)
         return Response(serializer.data)
 
+    @extend_schema(request=SavingsGoalSerializer, responses=SavingsGoalSerializer)
     def post(self, request):
         """Create a new savings goal for the authenticated user."""
         serializer = SavingsGoalSerializer(data=request.data)

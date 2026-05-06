@@ -5,6 +5,7 @@ from django.db.models import Sum
 from rest_framework.views import APIView
 from decimal import Decimal
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from finance.models import BudgetCategoryLimit, Transaction
 from .serializers import BudgetAlertSerializer, CategorySpendingSerializer, DashboardSummarySerializer
@@ -16,6 +17,7 @@ class BudgetStatusView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=BudgetAlertSerializer(many=True))
     def get(self, request):
         """List all budget category limits for the authenticated user's current month."""
         now = timezone.now()
@@ -33,6 +35,7 @@ class ReportsAnalyticsView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(operation_id="get_reports_analytics")
     def get(self, request):
         """
         Return category spending breakdown and income vs expense totals.
@@ -111,6 +114,7 @@ class DashboardHomeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=DashboardSummarySerializer)
     def get(self, request):
         """Return dashboard summary data for the authenticated user."""
         user = request.user

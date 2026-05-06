@@ -4,6 +4,7 @@ Views for handling user notifications and read status.
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
 from .models import Notification
 from .serializers import NotificationSerializer
 
@@ -22,12 +23,14 @@ class NotificationViewSet(viewsets.ModelViewSet):
         """Attach the authenticated user to the new notification."""
         serializer.save(user=self.request.user)
 
+    @extend_schema(request=None, responses={200: None})
     @action(detail=False, methods=['post'])
     def mark_all_read(self, request):
         """Mark every notification for the authenticated user as read."""
         self.get_queryset().update(is_read=True)
         return Response({'message': 'All notifications marked as read'})
 
+    @extend_schema(request=None, responses={200: None})
     @action(detail=True, methods=['post'])
     def mark_read(self, request, pk=None):
         """Mark a single notification as read by its ID."""
