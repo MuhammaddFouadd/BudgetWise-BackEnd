@@ -39,7 +39,7 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
     @extend_schema(request=None, responses={200: inline_serializer('LogoutResponse', {'message': serializers.CharField()})})
-    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['get', 'post'], permission_classes=[permissions.IsAuthenticated])
     def logout(self, request):
         """End the current user session."""
         logout(request)
