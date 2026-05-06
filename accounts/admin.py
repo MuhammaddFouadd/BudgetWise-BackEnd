@@ -3,6 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 from .models import User
 
 class CustomUserAdmin(UserAdmin):
-   ordering = ('email',)
+    ordering = ('email',)
 
 admin.site.register(User, CustomUserAdmin)

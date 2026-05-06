@@ -39,7 +39,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     
-    currency = models.CharField(max_length=5, default='USD')
+    currency = models.CharField(max_length=5, default='EGP' ,blank=True)
     status = models.CharField(max_length=20, default='Onboarding')
     language = models.CharField(max_length=20, default='English')
 
@@ -55,3 +55,5 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+    class Meta:
+        ordering = ["email"]
