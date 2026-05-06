@@ -18,14 +18,6 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       """
       User.objects.create_user(**serializer.validated_data)
    
-   # def get_permissions(self):
-   #    """
-   #    Return the permissions according to actions triggered.
-   #    """
-   #    if self.action in ['login', 'create']:
-   #       return [permissions.AllowAny()]
-   #    return [permissions.IsAuthenticated()]
-   
    @action(detail=False, methods=['post'])
    def login(self ,request) :
       """
@@ -43,7 +35,7 @@ class AuthViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
       return Response ({"message": "Invlaid credentials"}, status= status.HTTP_401_UNAUTHORIZED)
 
 
-   @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+   @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
    def logout(self, request):
       """
       Custom action for user logout.
