@@ -1,115 +1,124 @@
-# BudgetWise Backend API Documentation
+# 🔌 BudgetWise API Documentation
 
-Base URL: `http://localhost:8000/`
-
-## Authentication
-
-The backend uses Session Authentication. For frontend applications (e.g. `localhost:3000`), CORS is enabled and you must send requests with credentials.
-**Important**: In your `fetch()` calls, always include `credentials: "include"`.
-
-### Login
-- **URL**: `POST /auth/login/`
-- **Body**:
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "secret"
-  }
-  ```
-- **Response**: `200 OK` with user data and a session cookie.
-
-### Logout
-- **URL**: `POST /auth/logout/`
-- **Response**: `200 OK`
-
-### Register
-- **URL**: `POST /auth/`
-- **Body**:
-  ```json
-  {
-    "email": "user@example.com",
-    "first_name": "First",
-    "last_name": "Last",
-    "password": "secret"
-  }
-  ```
-- **Response**: `201 Created`
-
-### Current User Profile
-- **URL**: `GET /auth/me/`
-- **Response**: `200 OK` with profile info (email, name, currency, language, status).
-
-### Update Profile
-- **URL**: `PATCH /auth/update_profile/`
-- **Body**: (Partial updates allowed)
-  ```json
-  {
-    "first_name": "New Name",
-    "currency": "USD",
-    "language": "Arabic"
-  }
-  ```
-- **Response**: `200 OK` with updated profile.
+> [!NOTE]
+> **Base URL:** `https://budget-wise-back-end.vercel.app/`
+> **Interactive Docs:** Test these endpoints live via Swagger UI at [https://budget-wise-back-end.vercel.app/api/docs/](https://budget-wise-back-end.vercel.app/api/docs/).
 
 ---
 
-## Finance Endpoints
-All finance endpoints require authentication.
+## 🔐 1. Authentication
+
+The backend uses **Session Authentication**. For frontend applications (e.g. `localhost:3000`), CORS is enabled and you must send requests with credentials.
+
+> [!IMPORTANT]  
+> In your frontend API fetch calls, you must include `credentials: "include"` to ensure the session cookie is passed!
+
+| Endpoint                | Method  | Description                                 |
+| ----------------------- | ------- | ------------------------------------------- |
+| `/auth/login/`          | `POST`  | Authenticate user and establish a session   |
+| `/auth/logout/`         | `POST`  | Destroy the current session                 |
+| `/auth/`                | `POST`  | Register a new user                         |
+| `/auth/me/`             | `GET`   | Retrieve current authenticated user profile |
+| `/auth/update_profile/` | `PATCH` | Update specific user profile fields         |
+
+### Example Payloads
+
+**Login Request:**
+
+```json
+{
+  "email": "user@example.com",
+  "password": "secret_password"
+}
+```
+
+**Register Request:**
+
+```json
+{
+  "email": "user@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "password": "secret_password"
+}
+```
+
+---
+
+## 💸 2. Finance Endpoints
+
+All finance endpoints require the user to be fully authenticated.
 
 ### Categories
-- `GET /finance/categories/` - List user & predefined categories.
-- `POST /finance/categories/` - Create custom category.
-- `PATCH /finance/categories/{id}/` - Edit category.
-- `DELETE /finance/categories/{id}/` - Delete category.
 
-**Fields**: `name`, `type` (`expense`/`income`).
+Manage transaction categories (e.g., Food, Salary, Rent).
+
+| Endpoint                    | Method   | Description                           |
+| --------------------------- | -------- | ------------------------------------- |
+| `/finance/categories/`      | `GET`    | List all user & predefined categories |
+| `/finance/categories/`      | `POST`   | Create a custom category              |
+| `/finance/categories/{id}/` | `PATCH`  | Edit an existing category             |
+| `/finance/categories/{id}/` | `DELETE` | Remove a category                     |
 
 ### Transactions
-- `GET /finance/transactions/` - List transactions.
-  - **Filters**: `?type=expense`, `?category=3`, `?date_from=2026-05-01`, `?date_to=2026-05-31`
-- `POST /finance/transactions/` - Create transaction.
-  - **Body (Expense)**: `{"type": "expense", "category": 3, "amount": "100", "date": "2026-05-01", "description": "Lunch"}`
-  - **Body (Income)**: `{"type": "income", "amount": "1000", "source": "Job", "date": "2026-05-01"}`
-- `PATCH /finance/transactions/{id}/`
-- `DELETE /finance/transactions/{id}/`
 
-### Budgets
-- `GET /finance/budgets/` - List monthly budgets. (Response includes `spent` and `remaining`)
-- `POST /finance/budgets/` - Create a budget.
+Track all income and expenses.
 
-### Budget Category Limits
-- `GET /finance/budget-category-limits/` - List category limits within budgets.
-- `POST /planning/budget-limit/` - Create a new limit for the *current* month.
-  - **Body**: `{"category": 3, "limit": "500.00"}`
+| Endpoint                      | Method   | Description          | Parameters / Queries                               |
+| ----------------------------- | -------- | -------------------- | -------------------------------------------------- |
+| `/finance/transactions/`      | `GET`    | List transactions    | `?type=expense`, `?category=3`, `?date_from=Y-M-D` |
+| `/finance/transactions/`      | `POST`   | Create a transaction | Requires `type`, `amount`, `date`                  |
+| `/finance/transactions/{id}/` | `PATCH`  | Edit a transaction   |                                                    |
+| `/finance/transactions/{id}/` | `DELETE` | Delete a transaction |                                                    |
+
+### Budgets & Limits
+
+Plan your monthly spending limits.
+
+| Endpoint                           | Method | Description                                                     |
+| ---------------------------------- | ------ | --------------------------------------------------------------- |
+| `/finance/budgets/`                | `GET`  | List monthly budgets (includes `spent` and `remaining` amounts) |
+| `/finance/budgets/`                | `POST` | Create a new budget period                                      |
+| `/finance/budget-category-limits/` | `GET`  | View spending limits assigned to specific categories            |
+| `/planning/budget-limit/`          | `POST` | Set a new spending limit for a specific category                |
 
 ### Savings Goals
-- `GET /finance/savings-goals/` - List savings goals (Response includes `progress`).
-- `POST /finance/savings-goals/` - Create goal.
-- `POST /finance/savings-goals/{id}/contribute/` - Add funds to goal.
-  - **Body**: `{"amount": "100.00"}`
+
+Set targets and track financial growth.
+
+| Endpoint                                  | Method | Description                                           |
+| ----------------------------------------- | ------ | ----------------------------------------------------- |
+| `/finance/savings-goals/`                 | `GET`  | List savings goals alongside their current `progress` |
+| `/finance/savings-goals/`                 | `POST` | Create a new savings goal                             |
+| `/finance/savings-goals/{id}/contribute/` | `POST` | Add funds towards a specific goal                     |
 
 ---
 
-## Analytics Endpoints
-All analytics endpoints require authentication.
+## 📈 3. Analytics Endpoints
 
-### Dashboard Summary
-- `GET /analytics/dashboard-summary/`
-- **Response**: Returns `total_balance`, `monthly_income`, `monthly_expenses`, `recent_transactions` (array), and `budget_warnings` (array).
+Extract insights from user financial data.
 
-### Budget Alerts
-- `GET /analytics/budget-alert/`
-- **Response**: Returns alerts for category limits, including `progress_percentage`, `status_color`, and `alert_message`.
-
-### Reports & Charts
-- `GET /analytics/reports/` - Detailed pie/bar chart data.
-  - **Filters**: `?start_date=2026-05-01&end_date=2026-05-31`
-- `GET /finance/reports/monthly/` - Quick monthly totals (`?month=5&year=2026`).
-- `GET /finance/reports/by_category/` - Totals grouped by category (`?month=5&year=2026`).
+| Endpoint                        | Method | Description                                                                                |
+| ------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
+| `/analytics/dashboard-summary/` | `GET`  | Returns an aggregate of `total_balance`, `monthly_income/expenses`, and `budget_warnings`. |
+| `/analytics/budget-alert/`      | `GET`  | Retrieves category warnings with `progress_percentage` and `status_color`.                 |
+| `/analytics/reports/`           | `GET`  | Fetch detailed chart data. Filter with `?start_date=` and `?end_date=`.                    |
+| `/finance/reports/monthly/`     | `GET`  | Returns quick monthly totals (`?month=X&year=YYYY`).                                       |
+| `/finance/reports/by_category/` | `GET`  | Returns totals grouped by category.                                                        |
 
 ---
 
-## Notifications
-- `GET /notifications/notifications/` - List all notifications.
-- `POST /notifications/notifications/{id}/mark_read/` - Mark one read.
-- `POST /notifications/notifications/mark_all_read/` - Mark all read.
+## 🔔 4. Notifications
+
+Manage systemic alerts for the user.
+
+| Endpoint                                       | Method | Description                           |
+| ---------------------------------------------- | ------ | ------------------------------------- |
+| `/notifications/notifications/`                | `GET`  | List all notifications                |
+| `/notifications/notifications/{id}/mark_read/` | `POST` | Mark a specific notification as read  |
+| `/notifications/notifications/mark_all_read/`  | `POST` | Mark all unread notifications as read |
+
+---
+
+> [!TIP]
+> Use tools like **Postman** or **Insomnia** to interact with these endpoints locally by sending the session cookie in your request headers.

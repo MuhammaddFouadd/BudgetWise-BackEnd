@@ -1,54 +1,107 @@
-# BudgetWise Backend
+# 💰 BudgetWise Backend
 
-A comprehensive Django REST API backend for personal finance management.
+<div align="center">
+  <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green" alt="Django" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+</div>
 
-## Features
+<br />
 
-- **User Authentication**: Session-based authentication with Django
-- **Finance Management**: Complete CRUD operations for transactions, budgets, savings goals, and categories
-- **Analytics**: Generate financial reports and insights
-- **Notifications**: User notifications for budget alerts and reminders
-- **Planning**: Financial goals and budget planning tools
+A comprehensive and robust Django REST API backend designed for personal finance management. **BudgetWise** empowers users to track expenses, set budget limits, manage savings goals, and analyze their financial health with precision.
 
-## API Endpoints
+---
 
-### Authentication
-- `POST /auth/login/` - User login
-- `POST /auth/logout/` - User logout
-- `POST /auth/` - User registration
+## 🌟 Key Features
 
-### Finance
-- `GET/POST /finance/categories/` - Manage categories
-- `GET/POST /finance/transactions/` - Manage transactions
-- `GET /finance/transactions/summary/` - Get financial summary
-- `GET /finance/transactions/by_category/` - Transactions by category
-- `GET/POST /finance/budgets/` - Manage budgets
-- `GET/POST /finance/savings-goals/` - Manage savings goals
+- **🔐 Secure Authentication**: Robust session-based authentication with customizable user profiles and multi-currency support.
+- **💸 Transaction Tracking**: Log, categorize, and monitor incomes and expenses seamlessly.
+- **📊 Smart Analytics**: Generate real-time financial summaries, cash flow trends, and category-based breakdown reports.
+- **🎯 Budget & Savings Planning**: Set dynamic monthly budgets, category-specific spending limits, and track progress towards savings goals.
+- **🔔 Proactive Notifications**: Receive automated alerts for budget thresholds, upcoming bills, and important financial updates.
 
-### Analytics
-- `GET/POST /analytics/reports/` - Generate and view reports
+## 🏗️ System Architecture
 
-### Notifications
-- `GET/POST /notifications/notifications/` - Manage notifications
+```mermaid
+graph TD
+    Client([Frontend App / Browser]) -->|HTTP REST API| API[Django Routing & Middleware]
+    
+    subgraph BudgetWise Core System
+        API --> Auth[Accounts App <br/> User Auth & Profiles]
+        API --> Finance[Finance App <br/> Transactions & Budgets]
+        API --> Planning[Planning App <br/> Goals & Limits]
+        API --> Analytics[Analytics App <br/> Data Aggregation]
+        API --> Notifications[Notifications App <br/> Alerts]
+    end
+    
+    Auth --> DB[(PostgreSQL Database <br/> Hosted on Supabase)]
+    Finance --> DB
+    Planning --> DB
+    Analytics -.-> Finance
+    Notifications --> DB
+```
 
-### Planning
-- `GET/POST /planning/goals/` - Manage financial goals
-- `GET/POST /planning/plans/` - Manage budget plans
+## 🚀 Quick Start Guide
 
-## Setup
+### Prerequisites
+- Python 3.10+
+- PostgreSQL (or local SQLite for dev)
 
-1. Clone the repository
-2. Create virtual environment: `python -m venv .venv`
-3. Activate: `source .venv/bin/activate`
-4. Install dependencies: `pip install -r requirements.txt`
-5. Run migrations: `python manage.py migrate`
-6. Create superuser: `python manage.py createsuperuser`
-7. Run server: `python manage.py runserver`
+### Installation Steps
 
-## Testing
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/BudgetWise-BackEnd.git
+   cd BudgetWise-BackEnd
+   ```
 
-Run tests with: `python manage.py test`
+2. **Set up the virtual environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+   ```
 
-## Documentation
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-See `API_DOCUMENTATION.md` for detailed API documentation.
+4. **Configure Environment Variables**
+   Create a `.myenv` file in the project root to securely store your connection strings:
+   ```env
+   DATABASE_URL=postgresql://user:password@host:port/dbname
+   ```
+
+5. **Run Database Migrations**
+   ```bash
+   python manage.py migrate
+   ```
+
+6. **Create an Admin Superuser (Optional)**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. **Start the Development Server**
+   ```bash
+   python manage.py runserver
+   ```
+   > [!TIP]
+   > Access the live admin panel at [https://budget-wise-back-end.vercel.app/admin/](https://budget-wise-back-end.vercel.app/admin/) or locally at `http://localhost:8000/admin/`.
+
+## 📚 API Documentation
+
+BudgetWise implements standard OpenAPI specifications. You can access the live documentation here:
+
+- 🌍 **Production Swagger UI**: [https://budget-wise-back-end.vercel.app/api/docs/](https://budget-wise-back-end.vercel.app/api/docs/)
+- 📖 **[Detailed Manual API Docs](./API_DOCUMENTATION.md)**: A comprehensive guide for frontend integration.
+- 🔴 **ReDoc**: [https://budget-wise-back-end.vercel.app/api/redoc/](https://budget-wise-back-end.vercel.app/api/redoc/)
+- 💻 **Local Docs**: `http://localhost:8000/api/docs/` (when running locally)
+
+## 🧪 Testing
+
+To ensure system integrity, run the built-in test suite:
+```bash
+python manage.py test
+```
