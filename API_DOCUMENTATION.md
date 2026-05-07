@@ -1,6 +1,6 @@
 # BudgetWise Backend API Documentation
 
-Base URL: `http://localhost:8000/`
+Base URL: `https://budget-wise-back-end.vercel.app/`
 
 ## Authentication
 
