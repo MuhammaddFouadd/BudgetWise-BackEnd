@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-vb#2goa+k%fk0vbjv5t1*b(rg$x#h)c6z_81^y^t4r!0iz#azh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['budget-wise-back-end.vercel.app', 'localhost', '127.0.0.1', '*']
 
 # Application definition
 
@@ -63,14 +63,31 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'http://localhost:8080',
+    'http://localhost:5173',
+    'http://localhost:5500',
     'http://127.0.0.1:3000',
-    'http://127.0.0.1:8080',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5500',
+    'https://budget-wise-back-end.vercel.app',
+    
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:5500',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5500',
+]
 
 ROOT_URLCONF = 'Core.urls'
 
@@ -172,4 +189,4 @@ SPECTACULAR_SETTINGS = {
 }
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
