@@ -72,6 +72,14 @@ CORS_ALLOWED_ORIGINS = [
     'https://budget-wise-back-end.vercel.app',
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'Authorization',
+]
+
 ROOT_URLCONF = 'Core.urls'
 
 TEMPLATES = [
